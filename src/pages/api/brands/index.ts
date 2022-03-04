@@ -12,52 +12,78 @@ export default async function handler(req : NextApiRequest, res: NextApiResponse
       .select('*')
   
       if (error) {
-          res.status(500).json({ error })
-          res.end()
+        /**
+         * In case of error with Supase, we return the error message
+         * Example of Supabase Error Object sent to client:
+         * {
+         *   "error": {
+         *     "message": "new row violates row-level security policy for table \"beer_brands\"",
+         *     "code": "42501", [ POSTGRESQL ERROR CODE, see https://www.postgresql.org/docs/9.6/errcodes-appendix.html ]
+         *     "details": null,
+         *     "hint": null
+         *     }
+         *   }
+        **/
+        res.status(500).json({ error })
+        res.end()
       } else {
         res.status(200).json({ brands })
         res.end()
       }
     } catch (error) {
-        res.status(500).json({ error })
-        res.end()
+      // In case of Internal Error, it is retrieved 
+      res.status(500).json({ error })
+      res.end()
     }
   }
 
+  // Interface for Brand Object
   interface IBrand {
     brandName: string,
     logoUrl?: string | null,
   }
 
   const addBrand = async (brand: IBrand) => {
-    console.log("Hitteado, alto POST", brand)
-    console.log("Tipos de datos de lo que viene", typeof brand.brandName, typeof brand.logoUrl)
-
-
+    /**
+     * TODO: replace with express-validator middleware to validate the request body in all endpoints
+     * TODO: validate the shape of the body object. 
+     * Check out https://github.com/altostra/type-validations
+     * Article about it: https://www.altostra.com/blog/data-validation
+     **/ 
     let invalidData = typeof brand.brandName !== 'string' || (typeof brand.logoUrl !== 'string' && brand.logoUrl !== null);
-    console.log("Invalid Data?", invalidData)
     if (invalidData) {
-      res.status(400).json({ error: 'brandName and logoUrl must be a strings' })
-      return
+      return res.status(400).json({ error: 'brandName and logoUrl must be strings' })
     } else {
-      // res.status(200).json({ message: 'types are compatible' })
-      const { data, error } = await supabase
-      .from<definitions['beer_brands']>('beer_brands')
-      .insert([
-        { brand_name: brand.brandName,
-          logo_url: brand.logoUrl }
-      ])
-      
-      if (error) {
-          res.status(500).json({ error })
+      try {
+        const { data, error } = await supabase
+        .from<definitions['beer_brands']>('beer_brands')
+        .insert([
+          { brand_name: brand.brandName,
+            logo_url: brand.logoUrl }
+        ])
+
+        if (error) {
+        /**
+         * In case of error with Supase, it returns the error message
+         * Example of Supabase Error Object sent by its API:
+         * {
+         *   "error": {
+         *     "message": "new row violates row-level security policy for table \"beer_brands\"",
+         *     "code": "42501", [ POSTGRESQL ERROR CODE, see https://www.postgresql.org/docs/9.6/errcodes-appendix.html ]
+         *     "details": null,
+         *     "hint": null
+         *     }
+         *   }
+        **/
+          return res.status(400).json({ error })
         } else {
-          res.status(201).json({ brand: data })
+          return res.status(201).json({ brand: data })
+        }
+    } catch (error) {
+        // In case something went wrong with request
+        return res.status(555).json({ error })
       }
     }
-    
-
-      // res.status(201).json({ brand: brand })
-
   }
 
 
@@ -78,8 +104,4 @@ export default async function handler(req : NextApiRequest, res: NextApiResponse
       res.status(405).end() //Method Not Allowed
       break
   }
-  
-
-  
-
 }
