@@ -32,3 +32,6 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+# endpoints that can be abused
+/utils/constant
