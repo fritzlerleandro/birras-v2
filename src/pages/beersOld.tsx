@@ -2,10 +2,8 @@ import { GetServerSideProps } from "next";
 
 import { endpoints } from '../../utils/constant'
 
-import { Box } from "@chakra-ui/react";
+import { Center, Box } from "@chakra-ui/react";
 import BeerCard from "src/components/BeerCard";
-
-
 
 export default function BeersOld({ canillas }) {
   // console.log("canillas: ", canillas);
@@ -28,10 +26,14 @@ export default function BeersOld({ canillas }) {
   }
 
   return (
+    <Center
+      bg={'#fafafa'}
+    >
       <Box
-        backgroundImage={'radial-gradient(#cdd0ff 1px,transparent 0),radial-gradient(#cdd0ff 1px,#fefefe 0)'}
+        //backgroundImage={'radial-gradient(#cdd0ff 1px,transparent 0),radial-gradient(#cdd0ff 1px,#fefefe 0)'}
         //bg={'radial-gradient(#cdd0ff 1px,transparent 0),radial-gradient(#cdd0ff 1px,#fefefe 0)'}
-        bg={'#fafafa'}
+        m={'0 auto'}
+        minWidth={'95%'}
       >
         {canillas.map((beer) => {
           return <BeerCard 
@@ -41,6 +43,7 @@ export default function BeersOld({ canillas }) {
             />
         })}
       </Box>
+    </Center>
   )
 }
 

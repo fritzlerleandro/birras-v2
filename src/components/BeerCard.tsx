@@ -1,11 +1,14 @@
 // Constants
 import { colors } from '../../utils/constant';
 
+
+// Hooks
+import { useBreakpointValue } from '@chakra-ui/react';
+
 // Chakra components
 import {
   Box,
   Heading,
-  Image,
   Text,
   useDisclosure,
   Drawer,
@@ -22,8 +25,9 @@ import {
   SliderTrack,
   SliderFilledTrack,
   SliderThumb,
-  SliderMark
+  SliderMark,
 } from '@chakra-ui/react';
+import Image from 'next/image';
 
 // Icons
 import HopIcon from './icons/HopIcon';
@@ -37,15 +41,18 @@ export default function BeerCard({ beer, tapNumber, highestValues }) {
         const maintenance = beer.id === 113 ? true : false;
         return maintenance;
     }
+
+    const drawerVariant = useBreakpointValue({base: 'right', xs: 'bottom'});
+    const stackVariant = useBreakpointValue({base: '2xl', sm: 'xl'});
     
     return (
         <>
             <Stack 
                 direction={'row'} 
-                m={4}
-                p={4} 
+                m={'1rem auto'}
+                p={'1rem .25rem'} 
                 bg={'white'}
-                maxW='2xl'
+                maxW= { stackVariant }
                 onClick={ onToggle }
                 borderRadius= {8}
                 borderWidth={2}
@@ -68,14 +75,19 @@ export default function BeerCard({ beer, tapNumber, highestValues }) {
                         justifySelf={'center'}
                         mr={2}
                     >
-                        <Image 
-                            borderRadius='full'
-                            border={'1px solid #eaeaea'}
+                        <Box
+                            borderRadius={'full'}
+                            overflow='hidden'
                             boxSize={'4rem'}
-                            src={beer.imagen}
-                            alt={`Logo de la cerveza ${beer.name} de ${beer.brand}`}
-                            fallbackSrc={fallbackImage}
-                        />
+                            border={'1px solid #eaeaea'}
+                        >
+                            <Image
+                                src={beer.imagen || fallbackImage}
+                                alt={`Logo de la cerveza ${beer.name} de ${beer.brand}`}
+                                width={'100%'}
+                                height={'100%'}
+                            />
+                        </Box>
                     </GridItem>
                     <GridItem 
                         rowSpan={underMaintenance(beer) ? 2 : 1} 
@@ -109,11 +121,12 @@ export default function BeerCard({ beer, tapNumber, highestValues }) {
                         pt={12}
                     >
                         <Text
-                            fontSize='md'
+                            fontSize='sm'
                             color='black'
+                            fontWeight={'bold'}
                             align={'center'}
                         >
-                            Precio
+                            PRECIO
                         </Text>
                     </GridItem>
                     <GridItem
@@ -123,7 +136,11 @@ export default function BeerCard({ beer, tapNumber, highestValues }) {
                         justifySelf={'center'}
                         pt={12}
                     >
-                        <Text fontSize='md' color='black' align={'center'}>
+                        <Text fontSize='sm'
+                        color='black' 
+                        fontWeight={'bold'} 
+                        align={'center'}
+                        >
                             ABV
                         </Text>
                     </GridItem>
@@ -135,8 +152,9 @@ export default function BeerCard({ beer, tapNumber, highestValues }) {
                         pt={12}
                     >
                         <Text
-                            fontSize='md'
+                            fontSize='sm'
                             color='black'
+                            fontWeight={'bold'}
                             align={'center'}
                         >
                             IBU
@@ -194,24 +212,28 @@ export default function BeerCard({ beer, tapNumber, highestValues }) {
                 </Grid>
             </Stack>
             <Drawer
-                placement={'bottom'}
+                placement={ drawerVariant }
                 onClose={onClose}
                 isOpen={isOpen}
+                size={'md'}
             >
                 <DrawerOverlay />
                 <DrawerContent
                     borderTopRadius={12}
                 >
-                    <Center>
+                    <Center
+                        m={'2rem auto .5rem'}
+                        borderRadius='full'
+                        overflow={'hidden'}
+                        border={'1px solid #eaeaea'}
+                        boxSize='5rem'
+                        boxShadow='lg'                    
+                    >
                         <Image
-                            mt={5}
-                            borderRadius='full'
-                            border={'1px solid #eaeaea'}
-                            boxSize='5rem'
-                            src={beer.imagen}
+                            src={beer.imagen || fallbackImage}
                             alt={`${beer.name} de ${beer.brand}`}
-                            fallbackSrc={fallbackImage}
-                            boxShadow='lg'
+                            width={'100%'}
+                            height={'100%'}
                         />
                     </Center>
                     <DrawerHeader
@@ -261,8 +283,7 @@ export default function BeerCard({ beer, tapNumber, highestValues }) {
                         }
                         <Box
                             maxW={'sm'}
-                            mt={10}
-                            style={{overflow: 'hidden'}}
+                            m={'.5rem auto .5rem'}
                         >
                             {
                                 typeof beer.ibu === 'number' &&
