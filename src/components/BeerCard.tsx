@@ -1,5 +1,5 @@
 // Constants
-import { colors } from '../../utils/constant';
+import { colors } from 'utils/constant';
 
 // Hooks
 import { useBreakpointValue } from '@chakra-ui/react';
@@ -211,7 +211,7 @@ export default function BeerCard({ beer, tapNumber, highestValues }) {
                 </Grid>
             </Stack>
             <Drawer
-                placement={ drawerPlacement }
+                placement= { drawerPlacement === 'bottom' ? 'bottom' : 'right' }
                 onClose={onClose}
                 isOpen={isOpen}
                 size={'md'}
