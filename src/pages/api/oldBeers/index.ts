@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import oldBeers from 'utils/oldBeers'
+import { oldBeers } from 'utils/oldBeers'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { method } = req;
