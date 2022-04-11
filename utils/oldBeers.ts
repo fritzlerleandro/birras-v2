@@ -1,4 +1,4 @@
-const oldBeers = [
+export const oldBeers = [
     {
         "id": 79,
         "name": "APEROL SPRITZ DE BARRIL",
@@ -442,5 +442,3 @@ const oldBeers = [
         "imagen": "https://firebasestorage.googleapis.com/v0/b/menuvirtual-birras.appspot.com/o/logos-cervecerias%2Ffaucaria-logo.png?alt=media&token=8129479d-3a96-42f0-b611-8db950eaf4e9"
     }
 ]
-
-export default oldBeers;

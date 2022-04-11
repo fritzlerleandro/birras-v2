@@ -1,12 +1,13 @@
 import { GetServerSideProps } from "next";
 
-import { endpoints } from '../../utils/constant'
+import { endpoints } from 'utils/constant'
+import { oldBeers } from 'utils/oldBeers'
 
 import { Center, Box } from "@chakra-ui/react";
 import BeerCard from "src/components/BeerCard";
 
 export default function BeersOld({ canillas }) {
-  // console.log("canillas: ", canillas);
+  console.log("canillas: ", canillas);
   const getHighestValue = (beers: Object[], prop: string) => {
     const highestValue = beers.reduce((max, beer) => {
       if (typeof beer[prop] === 'number'
@@ -57,8 +58,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
      * but for the sake of this example and to test the logic,
      * I will use it this way.
      */
-    const OLD_BEERS_MOCK = "http://localhost:3000/api/oldBeers"
-    const canillas= await fetch(OLD_BEERS_MOCK).then(res=>res.json())
+    const canillas = oldBeers;
   
     return {
       props: {
