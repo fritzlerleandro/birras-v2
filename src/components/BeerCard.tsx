@@ -219,6 +219,7 @@ export default function BeerCard({ beer, tapNumber, highestValues }) {
                 <DrawerOverlay />
                 <DrawerContent
                     borderTopRadius={12}
+                    maxH={drawerPlacement === 'bottom' ? '75vh' : "100vh"}
                 >
                     <Center
                         m={'2rem auto .5rem'}
