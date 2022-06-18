@@ -8,7 +8,7 @@ export const oldBeers = [
         "category": "COCTEL",
         "subcategory": "",
         "ibu": "-",
-        "abv": "∼ 11",
+        "abv": 11,
         "description": "Spritz clásico (partes iguales de espumante y Aperol + un dash de soda) alimentado en barril con pieles de cítricos que elevan su carácter.",
         "imagen": "https://firebasestorage.googleapis.com/v0/b/menuvirtual-birras.appspot.com/o/logos-cervecerias%2FLaBirra-logo.png?alt=media&token=bda9b872-0eee-4b42-97a5-8ae32861626d"
     },
@@ -21,7 +21,7 @@ export const oldBeers = [
         "category": "COCTEL",
         "subcategory": "",
         "ibu": "-",
-        "abv": " ∼ 7",
+        "abv": 7,
         "description": "Gin tonic con un proceso de maceración en cedrón, pieles de limas, pimienta de jamaica y bayas de enebro, que lo hacen evolucionar conforme pasa el tiempo.",
         "imagen": "https://firebasestorage.googleapis.com/v0/b/menuvirtual-birras.appspot.com/o/logos-cervecerias%2FLaBirra-logo.png?alt=media&token=bda9b872-0eee-4b42-97a5-8ae32861626d"
     },
@@ -34,7 +34,7 @@ export const oldBeers = [
         "category": "COCTEL",
         "subcategory": "",
         "ibu": "-",
-        "abv": "∼ 28,5",
+        "abv": 28.5,
         "description": "Sin ser irreverentes, se mantiene la receta clásica, de partes iguales de gin, Campari y vermú rosso. La magia ocurre luego en la maceración, que da por resultado un Negroni distinto, con notas de canela, clavo de olor y pomelo rosado.",
         "imagen": "https://firebasestorage.googleapis.com/v0/b/menuvirtual-birras.appspot.com/o/logos-cervecerias%2FLaBirra-logo.png?alt=media&token=bda9b872-0eee-4b42-97a5-8ae32861626d"
     },

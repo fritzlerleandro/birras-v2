@@ -1,30 +1,28 @@
-import { NextApiRequest, NextApiResponse } from 'next'
-import { oldBeers } from 'utils/oldBeers'
+import {NextApiRequest, NextApiResponse} from "next";
+
+import {oldBeers} from "utils/oldBeers";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { method } = req;
+  const {method} = req;
 
   const getOldBeers = async () => {
     try {
-        return res.status(200).json(oldBeers)
+      return res.status(200).json(oldBeers);
     } catch (error) {
-        return res.status(error.status).json({ error })
+      return res.status(error.status).json({error});
     }
-  }
+  };
 
-
-  switch(method) {
-    case 'GET':
+  switch (method) {
+    case "GET":
       // Get list of beers
       getOldBeers();
-      break
-    case 'POST':
+      break;
+    case "POST":
       // Create new beer
-      break
-    default:
-      res.status(405).end() //Method Not Allowed
-      break
+      break;
+    default: //Method Not Allowed
+      res.status(405).end();
+      break;
   }
-
-
 }
