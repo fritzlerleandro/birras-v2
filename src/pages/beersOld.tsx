@@ -16,23 +16,13 @@ import {
 import {MdFilterList} from "react-icons/md";
 import {useDisclosure} from "@chakra-ui/react";
 
+import BeerCard from "src/components/BeerCard";
+import SearchBar from "src/components/SearchBar";
 import {endpoints} from "utils/constant";
 import {oldBeers} from "utils/oldBeers";
 
-// Components
-import BeerCard from "src/components/BeerCard";
-import SearchBar from "src/components/SearchBar";
-
 export default function BeersOld({canillas}) {
   const {isOpen, onOpen, onClose} = useDisclosure();
-
-  //
-  const [searchQuery, setSearchQuery] = useState("");
-
-  const [filterByIbu, setFilterByIbu] = useState([]);
-  const [filterByAbv, setFilterByAbv] = useState([]);
-  const [filterByCategory, setFilterByCategory] = useState([]);
-  const [filterByBrand, setFilterByBrand] = useState([]);
 
   interface IMinMax {
     min: number;
@@ -42,6 +32,7 @@ export default function BeersOld({canillas}) {
   type TbeerCategories = "COCTEL" | "GOLDEN" | "APA" | "IPA" | "RED" | "DARK";
 
   interface IFilterState {
+    name: string;
     abv: IMinMax;
     ibu: IMinMax;
     category: TbeerCategories[];
@@ -49,6 +40,7 @@ export default function BeersOld({canillas}) {
   }
 
   const [filterState, setFilterState] = useState<IFilterState>({
+    name: "",
     abv: {
       min: null,
       max: null,
@@ -62,20 +54,49 @@ export default function BeersOld({canillas}) {
   });
 
   interface IFilter {
+    name: Function;
     abv: Function;
     ibu: Function;
     category: Function;
     brand: Function;
   }
 
+  // Filter predicates for filtering beers
   const filters = {
-    abv: (abv: number) => abv >= filterState.abv.min && abv <= filterState.abv.max,
-    ibu: (ibu: number) => ibu >= filterState.ibu.min && ibu <= filterState.ibu.max,
+    name: (name: string) => {
+      if (filterState.name === "") {
+        return name;
+      }
+
+      return name.toLowerCase().includes(filterState.name.toLocaleLowerCase());
+    },
+    abv: (abv: number) => {
+      if (filterState.abv.min !== null && filterState.abv.max !== null) {
+        return abv >= filterState.abv.min && abv <= filterState.abv.max;
+      } else {
+        return abv;
+      }
+    },
+    ibu: (ibu: number) => {
+      if (filterState.ibu.min !== null && filterState.ibu.max !== null) {
+        return ibu >= filterState.ibu.min && ibu <= filterState.ibu.max;
+      } else {
+        return ibu;
+      }
+    },
     category: (category: TbeerCategories) => {
-      return filterState.category.includes(category); // case sensitive
+      if (filterState.category.length) {
+        return filterState.category.includes(category); // case sensitive
+      } else {
+        return true;
+      }
     },
     brand: (brand: string) => {
-      return filterState.brand.includes(brand); // case sensitive;
+      if (filterState.brand.length) {
+        return filterState.brand.includes(brand); // case sensitive;
+      } else {
+        return true;
+      }
     },
   };
 
@@ -117,20 +138,12 @@ export default function BeersOld({canillas}) {
   }
 
   const handleChange = (e) => {
-    setSearchQuery(e.target.value);
-  };
-
-  const handleSearch = (canilla) => {
-    if (searchQuery === "") {
-      return canilla;
-    }
-
-    return Object.keys(canilla).some((key) => {
-      if (typeof canilla[key] === "string") {
-        return canilla[key].toLowerCase().includes(searchQuery.toLowerCase());
-      }
+    setFilterState({
+      ...filterState,
+      name: e.target.value,
     });
   };
+
   // console.log("canillas: ", canillas);
   const getHighestValue = (beers: Object[], prop: string) => {
     const highestValue = beers.reduce((max, beer) => {
@@ -161,7 +174,7 @@ export default function BeersOld({canillas}) {
         min: 1,
         max: 50,
       },
-      category: ["RED", "DARK"],
+      category: ["RED", "DARK", "IPA"],
       //category : [beerCategories.Golden, beerCategories.Ipa, beerCategories.Apa, beerCategories.Red, beerCategories.Dark],
       brand: ["PALO Y HUESO", "OKCIDENTA", "FAUCARIA", "NOMADA"],
     });
@@ -215,7 +228,7 @@ export default function BeersOld({canillas}) {
         </ModalContent>
       </Modal>
       <VStack spacing={4}>
-        {canillas.filter(handleSearch).map((beer) => {
+        {filterArray(canillas, filters).map((beer) => {
           return (
             <BeerCard
               key={`${beer.id}_${canillas.indexOf(beer)}`}
