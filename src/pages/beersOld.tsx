@@ -231,7 +231,7 @@ export default function BeersOld({canillas}) {
         {filterArray(canillas, filters).map((beer) => {
           return (
             <BeerCard
-              key={`${beer.id}_${canillas.indexOf(beer)}`}
+              key={`${beer.id}_${canillas.indexOf(beer)}`} // @ts-ignore
               beer={beer}
               highestValues={highestValues}
               tapNumber={canillas.indexOf(beer) + 1}
