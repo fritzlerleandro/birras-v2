@@ -24,6 +24,19 @@ import {oldBeers} from "utils/oldBeers";
 export default function BeersOld({canillas}) {
   const {isOpen, onOpen, onClose} = useDisclosure();
 
+  interface IBeer {
+    id: number;
+    name: string;
+    brand: string;
+    price: number;
+    on_tap: number;
+    category: string;
+    subcategory: string;
+    ibu: number | string;
+    abv: number | string;
+    description: string;
+    imagen: string;
+  }
   interface IMinMax {
     min: number;
     max: number;
@@ -228,10 +241,10 @@ export default function BeersOld({canillas}) {
         </ModalContent>
       </Modal>
       <VStack spacing={4}>
-        {filterArray(canillas, filters).map((beer) => {
+        {filterArray(canillas, filters).map((beer: IBeer) => {
           return (
             <BeerCard
-              key={`${beer.id}_${canillas.indexOf(beer)}`} // @ts-ignore
+              key={`${beer.id}_${canillas.indexOf(beer)}`}
               beer={beer}
               highestValues={highestValues}
               tapNumber={canillas.indexOf(beer) + 1}
