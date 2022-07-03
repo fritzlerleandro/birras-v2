@@ -21,36 +21,44 @@ import SearchBar from "src/components/SearchBar";
 import {endpoints} from "utils/constant";
 import {oldBeers} from "utils/oldBeers";
 
+export interface IBeer {
+  id: number;
+  name: string;
+  brand: string;
+  price: number;
+  on_tap: number;
+  category: string;
+  subcategory: string;
+  ibu: number | string;
+  abv: number | string;
+  description: string;
+  imagen: string;
+}
+export interface IMinMax {
+  min: number;
+  max: number;
+}
+
+export type TbeerCategories = "COCTEL" | "GOLDEN" | "APA" | "IPA" | "RED" | "DARK";
+
+export interface IFilterState {
+  name: string;
+  abv: IMinMax;
+  ibu: IMinMax;
+  category: TbeerCategories[];
+  brand: string[];
+}
+
+export interface IFilter {
+  name: Function;
+  abv: Function;
+  ibu: Function;
+  category: Function;
+  brand: Function;
+}
+
 export default function BeersOld({canillas}) {
   const {isOpen, onOpen, onClose} = useDisclosure();
-
-  interface IBeer {
-    id: number;
-    name: string;
-    brand: string;
-    price: number;
-    on_tap: number;
-    category: string;
-    subcategory: string;
-    ibu: number | string;
-    abv: number | string;
-    description: string;
-    imagen: string;
-  }
-  interface IMinMax {
-    min: number;
-    max: number;
-  }
-
-  type TbeerCategories = "COCTEL" | "GOLDEN" | "APA" | "IPA" | "RED" | "DARK";
-
-  interface IFilterState {
-    name: string;
-    abv: IMinMax;
-    ibu: IMinMax;
-    category: TbeerCategories[];
-    brand: string[];
-  }
 
   const [filterState, setFilterState] = useState<IFilterState>({
     name: "",
@@ -65,14 +73,6 @@ export default function BeersOld({canillas}) {
     category: [],
     brand: [],
   });
-
-  interface IFilter {
-    name: Function;
-    abv: Function;
-    ibu: Function;
-    category: Function;
-    brand: Function;
-  }
 
   // Filter predicates for filtering beers
   const filters = {
@@ -158,7 +158,7 @@ export default function BeersOld({canillas}) {
   };
 
   // console.log("canillas: ", canillas);
-  const getHighestValue = (beers: Object[], prop: string) => {
+  const getHighestValue = (beers: IBeer[], prop: string): number => {
     const highestValue = beers.reduce((max, beer) => {
       if (typeof beer[prop] === "number" && beer[prop] > max) {
         return beer[prop];
@@ -171,7 +171,10 @@ export default function BeersOld({canillas}) {
   };
 
   // Retrieve highestValue for IBU and ABV
-  const highestValues = {
+  const highestValues: {
+    abv: number;
+    ibu: number;
+  } = {
     ibu: getHighestValue(canillas, "ibu"),
     abv: getHighestValue(canillas, "abv"),
   };

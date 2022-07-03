@@ -19,8 +19,24 @@ import {
 
 import HopIcon from "./icons/HopIcon";
 import PercentageIcon from "./icons/PercentageIcon";
+import {IBeer} from "./../pages/beersOld";
 
-function BeerDrawer({beer, isOpen, onClose, fallbackImage, underMaintenance, highestValues}) {
+interface IBeerDraweProps {
+  beer: IBeer;
+  isOpen: boolean;
+  onClose: () => void;
+  fallbackImage: string;
+  underMaintenance: (beer: IBeer) => boolean;
+  highestValues: {ibu: number; abv: number};
+}
+function BeerDrawer({
+  beer,
+  isOpen,
+  onClose,
+  fallbackImage,
+  underMaintenance,
+  highestValues,
+}: IBeerDraweProps): JSX.Element {
   const drawerPlacement = useBreakpointValue({base: "bottom", lg: "rigth"});
 
   return (
@@ -91,7 +107,7 @@ function BeerDrawer({beer, isOpen, onClose, fallbackImage, underMaintenance, hig
                   max={highestValues.ibu}
                   mb={10}
                   min={0}
-                  value={parseInt(beer.ibu)}
+                  value={typeof beer.ibu === "string" ? parseInt(beer.ibu) : beer.ibu}
                 >
                   <SliderMark fontSize="sm" ml="-2.5" mt="1" value={0}>
                     0
@@ -109,10 +125,10 @@ function BeerDrawer({beer, isOpen, onClose, fallbackImage, underMaintenance, hig
                     ml="-5"
                     mt="-10"
                     textAlign="center"
-                    value={parseInt(beer.ibu)}
+                    value={typeof beer.ibu === "string" ? parseInt(beer.ibu) : beer.ibu}
                     w="12"
                   >
-                    {parseInt(beer.ibu)}
+                    {typeof beer.ibu === "string" ? parseInt(beer.ibu) : beer.ibu}
                   </SliderMark>
                   <SliderTrack>
                     <SliderFilledTrack bg="green.700" />
@@ -133,7 +149,7 @@ function BeerDrawer({beer, isOpen, onClose, fallbackImage, underMaintenance, hig
                   aria-label="abv-slider"
                   max={highestValues.abv}
                   min={0}
-                  value={parseFloat(beer.abv)}
+                  value={typeof beer.abv === "string" ? parseFloat(beer.abv) : beer.abv}
                 >
                   <SliderMark fontSize="sm" ml="-2.5" mt="1" value={0}>
                     0%
@@ -151,10 +167,10 @@ function BeerDrawer({beer, isOpen, onClose, fallbackImage, underMaintenance, hig
                     ml="-5"
                     mt="-10"
                     textAlign="center"
-                    value={parseFloat(beer.abv)}
+                    value={typeof beer.abv === "string" ? parseFloat(beer.abv) : beer.abv}
                     w="12"
                   >
-                    {`${parseFloat(beer.abv)} %`}
+                    {`${typeof beer.abv === "string" ? parseFloat(beer.abv) : beer.abv} %`}
                   </SliderMark>
                   <SliderTrack>
                     <SliderFilledTrack bg="yellow.500" />
