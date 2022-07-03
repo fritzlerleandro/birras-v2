@@ -1,6 +1,7 @@
 import {GetServerSideProps} from "next";
 import {useState} from "react";
 import {
+  Avatar,
   Box,
   Button,
   Modal,
@@ -12,14 +13,24 @@ import {
   ModalOverlay,
   VStack,
   HStack,
+  Slider,
+  SliderMark,
+  SliderFilledTrack,
+  SliderThumb,
+  SliderTrack,
+  Text,
+  Flex,
 } from "@chakra-ui/react";
 import {MdFilterList} from "react-icons/md";
 import {useDisclosure} from "@chakra-ui/react";
+import {CUIAutoComplete} from "chakra-ui-autocomplete";
 
 import BeerCard from "src/components/BeerCard";
 import SearchBar from "src/components/SearchBar";
 import {endpoints} from "utils/constant";
 import {oldBeers} from "utils/oldBeers";
+import HopIcon from "src/components/icons/HopIcon";
+import PercentageIcon from "src/components/icons/PercentageIcon";
 
 export interface IBeer {
   id: number;
@@ -57,8 +68,84 @@ export interface IFilter {
   brand: Function;
 }
 
+export interface IFilterBrand {
+  value: string;
+  label: string;
+  src: string;
+}
+
 export default function BeersOld({canillas}) {
+  const uniqueBrands: IFilterBrand[] = canillas.reduce((prev, curr) => {
+    if (!prev.some((brand) => brand.value === curr.brand)) {
+      prev.push({
+        value: String(curr.brand),
+        label: String(curr.brand),
+        src: curr.imagen,
+      });
+    }
+
+    return prev;
+  }, []);
+
+  const uniqueCategories: IFilterBrand[] = canillas.reduce((prev, curr) => {
+    if (!prev.some((category) => category.value === curr.category)) {
+      prev.push({
+        value: String(curr.category),
+        label: String(curr.category),
+        src: "",
+      });
+    }
+
+    return prev;
+  }, []);
+
+  console.log("marcas unicas: ", uniqueBrands);
+  console.log("categorias unicas: ", uniqueCategories);
+
   const {isOpen, onOpen, onClose} = useDisclosure();
+  // State for UI brand selection
+  const [pickerBrands, setPickerBrands] = useState(uniqueBrands);
+  const [selectedBrands, setSelectedBrands] = useState([]);
+  // State for UI category selection
+  const [pickerCategories, setPickerCategories] = useState(uniqueCategories);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+
+  const handleCreateItem = (item) => {
+    setPickerBrands((curr) => [...curr, item]);
+    setSelectedBrands((curr) => [...curr, item]);
+  };
+
+  const handleSelectedItemsChange = (selectedItems) => {
+    if (selectedItems) {
+      setSelectedBrands(selectedItems);
+    }
+  };
+
+  const handleSelectedCategoriesChange = (selectedCategory) => {
+    if (selectedCategory) {
+      setSelectedCategories(selectedCategory);
+    }
+  };
+
+  const customRender = (selected) => {
+    return (
+      <Flex alignItems="center" flexDir="row">
+        <Avatar mr={2} name={selected.label} size="sm" src={selected.src} />
+        <Text>{selected.label}</Text>
+      </Flex>
+    );
+  };
+
+  const customCreateItemRender = (value) => {
+    return (
+      <Text>
+        <Box as="span">Create</Box>{" "}
+        <Box as="span" bg="red.300" fontWeight="bold">
+          {value}
+        </Box>
+      </Text>
+    );
+  };
 
   const [filterState, setFilterState] = useState<IFilterState>({
     name: "",
@@ -191,7 +278,6 @@ export default function BeersOld({canillas}) {
         max: 50,
       },
       category: ["RED", "DARK", "IPA"],
-      //category : [beerCategories.Golden, beerCategories.Ipa, beerCategories.Apa, beerCategories.Red, beerCategories.Dark],
       brand: ["PALO Y HUESO", "OKCIDENTA", "FAUCARIA", "NOMADA"],
     });
   };
@@ -222,12 +308,120 @@ export default function BeersOld({canillas}) {
         </HStack>
       </Box>
 
-      <Modal isCentered isOpen={isOpen} onClose={onClose}>
+      <Modal isCentered isOpen={isOpen} size="sm" onClose={onClose}>
         <ModalOverlay backdropFilter="blur(10px) hue-rotate(90deg)" bg="blackAlpha.300" />
         <ModalContent>
-          <ModalHeader>Filtrar canillas</ModalHeader>
+          <ModalHeader>Filtros</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
+            {/* Filter by style */}
+            <Text color="gray.500">Elige el estilo</Text>
+            <CUIAutoComplete
+              createItemRenderer={customCreateItemRender}
+              disableCreateItem={true}
+              itemRenderer={customRender}
+              items={pickerCategories}
+              label={null}
+              listStyleProps={{
+                maxHeight: "8rem",
+                overflow: "scroll",
+              }}
+              placeholder="Escribe los estilos que quieres"
+              selectedItems={selectedCategories}
+              tagStyleProps={{
+                rounded: ".25rem",
+              }}
+              onCreateItem={handleCreateItem}
+              onSelectedItemsChange={(changes) =>
+                handleSelectedCategoriesChange(changes.selectedItems)
+              }
+            />
+            {/* Filter by brand */}
+            <Text color="gray.500">Elige tus marcas</Text>
+            <CUIAutoComplete
+              createItemRenderer={customCreateItemRender}
+              disableCreateItem={true}
+              itemRenderer={customRender}
+              items={pickerBrands}
+              label={null}
+              listStyleProps={{
+                maxHeight: "8rem",
+                overflow: "scroll",
+              }}
+              placeholder="Escribe una marca"
+              selectedItems={selectedBrands}
+              tagStyleProps={{
+                rounded: ".25rem",
+              }}
+              onCreateItem={handleCreateItem}
+              onSelectedItemsChange={(changes) => handleSelectedItemsChange(changes.selectedItems)}
+            />
+            {/* Filter by IBU */}
+            <Text color="gray.500" mb={10}>
+              Grado de amargor (IBU)
+            </Text>
+            <Slider aria-label="ibu-slider" max={highestValues.ibu} mb={10} min={0} value={50}>
+              <SliderMark fontSize="sm" ml="-2.5" mt="1" value={0}>
+                0
+              </SliderMark>
+              <SliderMark fontSize="sm" ml="-2.5" mt="1" value={highestValues.ibu / 2}>
+                {highestValues.ibu / 2}
+              </SliderMark>
+              <SliderMark fontSize="sm" ml="-2.5" mt="1" value={highestValues.ibu}>
+                {highestValues.ibu}
+              </SliderMark>
+              <SliderMark
+                bg="green.700"
+                borderRadius={4}
+                color="white"
+                ml="-5"
+                mt="-10"
+                textAlign="center"
+                value={50}
+                w="12"
+              >
+                {50}
+              </SliderMark>
+              <SliderTrack>
+                <SliderFilledTrack bg="green.700" />
+              </SliderTrack>
+              <SliderThumb boxSize={6}>
+                <HopIcon fill={"green.700"} />
+              </SliderThumb>
+            </Slider>
+            {/* Filter by ABV */}
+            <Text color="gray.500" mb={10}>
+              Porcentaje de alcohol (ABV%)
+            </Text>
+            <Slider isReadOnly aria-label="abv-slider" max={highestValues.abv} min={0} value={3}>
+              <SliderMark fontSize="sm" ml="-2.5" mt="1" value={0}>
+                0%
+              </SliderMark>
+              <SliderMark fontSize="sm" ml="-2.5" mt="1" value={highestValues.abv / 2}>
+                {highestValues.abv / 2}%
+              </SliderMark>
+              <SliderMark fontSize="sm" ml="-2.5" mt="1" value={highestValues.abv}>
+                {highestValues.abv}%
+              </SliderMark>
+              <SliderMark
+                bg="yellow.500"
+                borderRadius={4}
+                color="white"
+                ml="-5"
+                mt="-10"
+                textAlign="center"
+                value={3}
+                w="12"
+              >
+                {`${3} %`}
+              </SliderMark>
+              <SliderTrack>
+                <SliderFilledTrack bg="yellow.500" />
+              </SliderTrack>
+              <SliderThumb boxSize={6}>
+                <PercentageIcon fill={"yellow.500"} height={10} width={10} />
+              </SliderThumb>
+            </Slider>
             <Button
               colorScheme="facebok"
               leftIcon={<MdFilterList />}
