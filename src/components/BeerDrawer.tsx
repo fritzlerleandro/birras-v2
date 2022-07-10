@@ -47,11 +47,8 @@ function BeerDrawer({
       onClose={onClose}
     >
       <DrawerOverlay
-        //bg='blackAlpha.300'
-        backdropBlur="2px"
-        backdropFilter="auto"
-        backdropInvert="20%"
-        bg="none"
+        backdropFilter="blur(10px) hue-rotate(90deg)"
+        bg="blackAlpha.300"
       />
       <DrawerContent borderTopRadius={12} maxH={drawerPlacement === "bottom" ? "80vh" : "100vh"}>
         <Center

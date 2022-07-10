@@ -4,13 +4,13 @@ import {
   Avatar,
   Box,
   Button,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalCloseButton,
-  ModalOverlay,
+  Drawer,
+  DrawerBody,
+  DrawerContent,
+  DrawerHeader,
+  DrawerFooter,
+  DrawerCloseButton,
+  DrawerOverlay,
   VStack,
   HStack,
   Slider,
@@ -20,6 +20,8 @@ import {
   SliderTrack,
   Text,
   Flex,
+  useBreakpointValue,
+  Center
 } from "@chakra-ui/react";
 import {MdFilterList} from "react-icons/md";
 import {useDisclosure} from "@chakra-ui/react";
@@ -74,6 +76,7 @@ export interface IFilterBrand {
   src: string;
 }
 
+// Starts component declaration
 export default function BeersOld({canillas}) {
   const uniqueBrands: IFilterBrand[] = canillas.reduce((prev, curr) => {
     if (!prev.some((brand) => brand.value === curr.brand)) {
@@ -99,10 +102,11 @@ export default function BeersOld({canillas}) {
     return prev;
   }, []);
 
-  console.log("marcas unicas: ", uniqueBrands);
-  console.log("categorias unicas: ", uniqueCategories);
+  //console.log("marcas unicas: ", uniqueBrands);
+  //console.log("categorias unicas: ", uniqueCategories);
 
   const {isOpen, onOpen, onClose} = useDisclosure();
+  const drawerPlacement = useBreakpointValue({base: "bottom", lg: "rigth"});
   // State for UI brand selection
   const [pickerBrands, setPickerBrands] = useState(uniqueBrands);
   const [selectedBrands, setSelectedBrands] = useState([]);
@@ -147,6 +151,7 @@ export default function BeersOld({canillas}) {
     );
   };
 
+  // Defines filter state
   const [filterState, setFilterState] = useState<IFilterState>({
     name: "",
     abv: {
@@ -205,12 +210,10 @@ export default function BeersOld({canillas}) {
    *
    * @param  {Array}  array: the array to filter
    * @param  {Object} filters: an object with the filter criteria
-   * @return {Array}
-   *
-   * TODO: define Beer Object Interface
+   * @return {Array of IBeer}
    *
    */
-  function filterArray(beersArray: Object[], filters: IFilter): Object[] {
+  function filterArray(beersArray: IBeer[], filters: IFilter): IBeer[] {
     const filterKeys = Object.keys(filters);
 
     console.log("original beersArray:", beersArray, "Applied filters: ", filters);
@@ -221,7 +224,7 @@ export default function BeersOld({canillas}) {
       return filterKeys.every((key) => {
         // ignores non-function predicates
         if (typeof filters[key] !== "function") return true;
-        console.log(
+        /*console.log(
           "beer to evaluate: ",
           beer[key],
           "filterState: ",
@@ -230,7 +233,7 @@ export default function BeersOld({canillas}) {
           filters[key],
           "evaluations's result: ",
           filters[key](beer[key]),
-        );
+        ); */
 
         return filters[key](beer[key]);
       });
@@ -308,14 +311,16 @@ export default function BeersOld({canillas}) {
         </HStack>
       </Box>
 
-      <Modal isCentered isOpen={isOpen} size="sm" onClose={onClose}>
-        <ModalOverlay backdropFilter="blur(10px) hue-rotate(90deg)" bg="blackAlpha.300" />
-        <ModalContent>
-          <ModalHeader>Filtros</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
+      <Drawer placement={drawerPlacement === "bottom" ? "bottom" : "right"} isOpen={isOpen} size="sm" onClose={onClose}>
+        <DrawerOverlay backdropFilter="blur(10px) hue-rotate(90deg)" bg="blackAlpha.300" />
+        <DrawerContent borderTopRadius={12}>
+          <DrawerHeader>Ordenar y filtrar</DrawerHeader>
+          <DrawerCloseButton />
+          <DrawerBody>
             {/* Filter by style */}
-            <Text color="gray.500">Elige el estilo</Text>
+            <Text color="gray.500" mb={10}>Filtrar por estilos</Text>
+            {}
+            {/* <Text color="gray.500">Elige el estilo</Text>
             <CUIAutoComplete
               createItemRenderer={customCreateItemRender}
               disableCreateItem={true}
@@ -335,9 +340,10 @@ export default function BeersOld({canillas}) {
               onSelectedItemsChange={(changes) =>
                 handleSelectedCategoriesChange(changes.selectedItems)
               }
-            />
+            /> */}
             {/* Filter by brand */}
-            <Text color="gray.500">Elige tus marcas</Text>
+            <Text color="gray.500" mb={10}>Filtrar por Marcas</Text>
+            {/* <Text color="gray.500">Elige tus marcas</Text>
             <CUIAutoComplete
               createItemRenderer={customCreateItemRender}
               disableCreateItem={true}
@@ -355,9 +361,10 @@ export default function BeersOld({canillas}) {
               }}
               onCreateItem={handleCreateItem}
               onSelectedItemsChange={(changes) => handleSelectedItemsChange(changes.selectedItems)}
-            />
+            /> */}
             {/* Filter by IBU */}
-            <Text color="gray.500" mb={10}>
+            <Text color="gray.500" mb={10}>Filtrar por IBU</Text>
+            {/* <Text color="gray.500" mb={10}>
               Grado de amargor (IBU)
             </Text>
             <Slider aria-label="ibu-slider" max={highestValues.ibu} mb={10} min={0} value={50}>
@@ -390,7 +397,8 @@ export default function BeersOld({canillas}) {
               </SliderThumb>
             </Slider>
             {/* Filter by ABV */}
-            <Text color="gray.500" mb={10}>
+            <Text color="gray.500" mb={10}>Filtrar por ABV</Text>
+            {/* <Text color="gray.500" mb={10}>
               Porcentaje de alcohol (ABV%)
             </Text>
             <Slider isReadOnly aria-label="abv-slider" max={highestValues.abv} min={0} value={3}>
@@ -429,14 +437,13 @@ export default function BeersOld({canillas}) {
               onClick={handleSetFilters}
             >
               Setear filtros
-            </Button>
-          </ModalBody>
-          <ModalFooter>
-            <Button onClick={onClose}>Cerrar</Button>
-            <Button onClick={handleApplyFilters}>Ver filtros</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+            </Button> */}
+          </DrawerBody>
+          <DrawerFooter display='flex' mt='2' justifyContent="center" alignItems='center'>
+            <Button colorScheme={"linkedin"} width={"100%"} onClick={handleApplyFilters}>Aplicar</Button>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
       <VStack spacing={4}>
         {filterArray(canillas, filters).map((beer: IBeer) => {
           return (
