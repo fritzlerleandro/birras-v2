@@ -21,14 +21,21 @@ import {
   Text,
   Flex,
   useBreakpointValue,
-  Center
+  Center,
+  Spacer,
+  IconButton,
+  Icon,
+  Divider
 } from "@chakra-ui/react";
 import {MdFilterList} from "react-icons/md";
 import {useDisclosure} from "@chakra-ui/react";
 import {CUIAutoComplete} from "chakra-ui-autocomplete";
+import {MinusIcon} from "@chakra-ui/icons";
+import { uniqueValues } from "utils/helpers";
 
 import BeerCard from "src/components/BeerCard";
 import SearchBar from "src/components/SearchBar";
+import FilterList from "src/components/FilterList";
 import {endpoints} from "utils/constant";
 import {oldBeers} from "utils/oldBeers";
 import HopIcon from "src/components/icons/HopIcon";
@@ -78,30 +85,7 @@ export interface IFilterBrand {
 
 // Starts component declaration
 export default function BeersOld({canillas}) {
-  const uniqueBrands: IFilterBrand[] = canillas.reduce((prev, curr) => {
-    if (!prev.some((brand) => brand.value === curr.brand)) {
-      prev.push({
-        value: String(curr.brand),
-        label: String(curr.brand),
-        src: curr.imagen,
-      });
-    }
-
-    return prev;
-  }, []);
-
-  const uniqueCategories: IFilterBrand[] = canillas.reduce((prev, curr) => {
-    if (!prev.some((category) => category.value === curr.category)) {
-      prev.push({
-        value: String(curr.category),
-        label: String(curr.category),
-        src: "",
-      });
-    }
-
-    return prev;
-  }, []);
-
+  const uniqueBrands = uniqueValues(canillas, "brand");
   //console.log("marcas unicas: ", uniqueBrands);
   //console.log("categorias unicas: ", uniqueCategories);
 
@@ -110,9 +94,7 @@ export default function BeersOld({canillas}) {
   // State for UI brand selection
   const [pickerBrands, setPickerBrands] = useState(uniqueBrands);
   const [selectedBrands, setSelectedBrands] = useState([]);
-  // State for UI category selection
-  const [pickerCategories, setPickerCategories] = useState(uniqueCategories);
-  const [selectedCategories, setSelectedCategories] = useState([]);
+
 
   const handleCreateItem = (item) => {
     setPickerBrands((curr) => [...curr, item]);
@@ -123,32 +105,6 @@ export default function BeersOld({canillas}) {
     if (selectedItems) {
       setSelectedBrands(selectedItems);
     }
-  };
-
-  const handleSelectedCategoriesChange = (selectedCategory) => {
-    if (selectedCategory) {
-      setSelectedCategories(selectedCategory);
-    }
-  };
-
-  const customRender = (selected) => {
-    return (
-      <Flex alignItems="center" flexDir="row">
-        <Avatar mr={2} name={selected.label} size="sm" src={selected.src} />
-        <Text>{selected.label}</Text>
-      </Flex>
-    );
-  };
-
-  const customCreateItemRender = (value) => {
-    return (
-      <Text>
-        <Box as="span">Create</Box>{" "}
-        <Box as="span" bg="red.300" fontWeight="bold">
-          {value}
-        </Box>
-      </Text>
-    );
   };
 
   // Defines filter state
@@ -314,11 +270,22 @@ export default function BeersOld({canillas}) {
       <Drawer placement={drawerPlacement === "bottom" ? "bottom" : "right"} isOpen={isOpen} size="sm" onClose={onClose}>
         <DrawerOverlay backdropFilter="blur(10px) hue-rotate(90deg)" bg="blackAlpha.300" />
         <DrawerContent borderTopRadius={12}>
-          <DrawerHeader>Ordenar y filtrar</DrawerHeader>
-          <DrawerCloseButton />
+          <Center>
+            <Icon mt={1} >
+              <MinusIcon />
+            </Icon>
+          </Center>
+          <DrawerHeader>
+            <Center mb={3}>
+              Ordenar y filtrar
+            </Center>
+            <Divider/>
+          </DrawerHeader>
           <DrawerBody>
-            {/* Filter by style */}
+            <FilterList beers={canillas} filterState={filterState} setFilterState={setFilterState} sortState={""}/>
+            {/* <Flex>
             <Text color="gray.500" mb={10}>Filtrar por estilos</Text>
+            </Flex> */}
             {}
             {/* <Text color="gray.500">Elige el estilo</Text>
             <CUIAutoComplete
@@ -341,8 +308,6 @@ export default function BeersOld({canillas}) {
                 handleSelectedCategoriesChange(changes.selectedItems)
               }
             /> */}
-            {/* Filter by brand */}
-            <Text color="gray.500" mb={10}>Filtrar por Marcas</Text>
             {/* <Text color="gray.500">Elige tus marcas</Text>
             <CUIAutoComplete
               createItemRenderer={customCreateItemRender}
@@ -362,8 +327,7 @@ export default function BeersOld({canillas}) {
               onCreateItem={handleCreateItem}
               onSelectedItemsChange={(changes) => handleSelectedItemsChange(changes.selectedItems)}
             /> */}
-            {/* Filter by IBU */}
-            <Text color="gray.500" mb={10}>Filtrar por IBU</Text>
+            
             {/* <Text color="gray.500" mb={10}>
               Grado de amargor (IBU)
             </Text>
@@ -396,8 +360,6 @@ export default function BeersOld({canillas}) {
                 <HopIcon fill={"green.700"} />
               </SliderThumb>
             </Slider>
-            {/* Filter by ABV */}
-            <Text color="gray.500" mb={10}>Filtrar por ABV</Text>
             {/* <Text color="gray.500" mb={10}>
               Porcentaje de alcohol (ABV%)
             </Text>
@@ -429,15 +391,15 @@ export default function BeersOld({canillas}) {
               <SliderThumb boxSize={6}>
                 <PercentageIcon fill={"yellow.500"} height={10} width={10} />
               </SliderThumb>
-            </Slider>
-            <Button
+            </Slider>*/}
+            {/* <Button
               colorScheme="facebok"
               leftIcon={<MdFilterList />}
               variant="outline"
               onClick={handleSetFilters}
             >
               Setear filtros
-            </Button> */}
+            </Button>  */}
           </DrawerBody>
           <DrawerFooter display='flex' mt='2' justifyContent="center" alignItems='center'>
             <Button colorScheme={"linkedin"} width={"100%"} onClick={handleApplyFilters}>Aplicar</Button>
