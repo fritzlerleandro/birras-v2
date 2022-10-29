@@ -425,14 +425,14 @@ export default function BeersOld({canillas}) {
 // Get props to render the beer list
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
-    //const OLD_BEERS = endpoints.OLD_BEERS.value;
-    //const canillas= await fetch(OLD_BEERS).then(res=>res.json())
+    const OLD_BEERS = endpoints.OLD_BEERS.value;
+    const canillas= await fetch(OLD_BEERS).then(res=>res.json())
     /**
      * Disclaimer: This is not the way to go in next.js for production,
      * but for the sake of this example and to test the logic,
      * I will use it this way.
      */
-    const canillas = oldBeers;
+    //const canillas = oldBeers;
 
     return {
       props: {
