@@ -433,6 +433,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
      * I will use it this way.
      */
     //const canillas = oldBeers;
+//This comment should be deleted
 
     return {
       props: {
