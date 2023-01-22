@@ -2,9 +2,9 @@ import * as React from "react";
 
 const HopIcon = (props) => (
   <svg
-    height={682.667}
+    height={props.height}
     viewBox="0 0 512 512"
-    width={682.667}
+    width={props.width}
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >

@@ -19,7 +19,7 @@ import {
 
 import HopIcon from "./icons/HopIcon";
 import PercentageIcon from "./icons/PercentageIcon";
-import {IBeer} from "./../pages/beersOld";
+import {IBeer} from "./../pages/index";
 
 interface IBeerDraweProps {
   beer: IBeer;
